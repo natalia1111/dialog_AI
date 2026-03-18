@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>НейроДиалог</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .main-container {
+            border: 3px dashed #7c4dff;
+            border-radius: 20px;
+            padding: 30px;
+            background: white;
+        }
+
+        .main-title {
+            text-align: center;
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .main-subtitle {
+            text-align: center;
+            color: #555;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+        }
+
+        .card {
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .card-gray { background: #e8e8e8; }
+        .card-orange { background: #f5a623; }
+        .card-purple { background: #7c4dff; color: white; }
+        .card-red { background: #ff6b6b; }
+        .card-yellow { background: #fff3cd; }
+
+        .card-a { grid-column: 1; grid-row: 1; }
+        .card-d-orange { grid-column: 2; grid-row: 1; }
+        .card-d-purple { grid-column: 3; grid-row: 1; }
+        .card-s { grid-column: 4; grid-row: 1; }
+
+        .card-v { grid-column: 1; grid-row: 2; }
+        .card-i { grid-column: 2; grid-row: 2 / 4; }
+        .card-m { grid-column: 3; grid-row: 2; }
+        .card-t { grid-column: 4; grid-row: 2; }
+
+        .card-g { grid-column: 1; grid-row: 3; }
+        .card-p { grid-column: 3; grid-row: 3; }
+        .card-e { grid-column: 4; grid-row: 3; }
+
+        .circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #666;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+        }
+
+        .circle:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .card-content {
+            margin-top: 15px;
+        }
+
+        .card-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .card-link:hover {
+            opacity: 0.7;
+        }
+
+        .card-link::before {
+            content: "•";
+            font-size: 1.2em;
+        }
+
+        .card-link-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .card-link-wrapper .card-link {
+            margin: 0;
+        }
+
+        .card-link-wrapper .plus {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .card-link-wrapper .plus:hover {
+            transform: scale(1.1);
+        }
+
+        .plus {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            min-height: 24px;
+            border-radius: 50%;
+            background: #7c4dff;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 1;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .card-purple .plus {
+            background: white;
+            color: #7c4dff;
+        }
+
+        .section-container {
+            border: 3px dashed #7c4dff;
+            border-radius: 20px;
+            padding: 50px;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            min-height: 300px;
+        }
+
+        .section-icon {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .section-content h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .section-content p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #9b7fdb;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+            font-size: 1em;
+        }
+
+        .back-btn:hover {
+            background: #7c4dff;
+        }
+
+        .icon-audio::before { content: "🎧"; font-size: 60px; }
+        .icon-animation::before { content: "🎬"; font-size: 60px; }
+        .icon-dialog::before { content: "💬"; font-size: 60px; }
+        .icon-kim::before { content: "📋"; font-size: 60px; }
+        .icon-articles::before { content: "📄"; font-size: 60px; }
+        .icon-visual::before { content: "📊"; font-size: 60px; }
+        .icon-infographic::before { content: "📈"; font-size: 60px; }
+        .icon-identify::before { content: "🔍"; font-size: 60px; }
+        .icon-games::before { content: "🎮"; font-size: 60px; }
+        .icon-modeling::before { content: "🧊"; font-size: 60px; }
+        .icon-texts::before { content: "📝"; font-size: 60px; }
+        .icon-graphs::before { content: "📉"; font-size: 60px; }
+        .icon-plan::before { content: "📌"; font-size: 60px; }
+        .icon-present::before { content: "📽️"; font-size: 60px; }
+        .icon-express::before { content: "⚡"; font-size: 60px; }
+
+        /* ============ ПЛАНШЕТ (до 900px) ============ */
+        @media (max-width: 900px) {
+            .main-container {
+                padding: 20px;
+            }
+
+            .main-title {
+                font-size: 2em;
+            }
+
+            .main-subtitle {
+                font-size: 1em;
+                margin-bottom: 30px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+                gap: 15px;
+            }
+
+            .card-a, .card-d-orange, .card-d-purple, .card-s,
+            .card-v, .card-i, .card-m, .card-t,
+            .card-g, .card-p, .card-e {
+                grid-column: auto;
+                grid-row: auto;
+            }
+
+            .section-container {
+                padding: 30px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .section-content h1 {
+                font-size: 1.6em;
+            }
+
+            .section-content p {
+                font-size: 1em;
+            }
+        }
+
+        /* ============ ТЕЛЕФОН (до 500px) ============ */
+        @media (max-width: 500px) {
+            .page {
+                padding: 10px;
+            }
+
+            .main-container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+
+            .main-title {
+                font-size: 1.5em;
+            }
+
+            .main-subtitle {
+                font-size: 0.9em;
+                margin-bottom: 25px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .card {
+                padding: 25px 15px 15px;
+                min-height: auto;
+            }
+
+            .card-link {
+                font-size: 0.95em;
+            }
+
+            .section-container {
+                padding: 20px;
+                border-radius: 15px;
+                min-height: auto;
+            }
+
+            .section-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .icon-audio::before,
+            .icon-animation::before,
+            .icon-dialog::before,
+            .icon-kim::before,
+            .icon-articles::before,
+            .icon-visual::before,
+            .icon-infographic::before,
+            .icon-identify::before,
+            .icon-games::before,
+            .icon-modeling::before,
+            .icon-texts::before,
+            .icon-graphs::before,
+            .icon-plan::before,
+            .icon-present::before,
+            .icon-express::before {
+                font-size: 50px;
+            }
+
+            .section-content h1 {
+                font-size: 1.3em;
+            }
+
+            .section-content p {
+                font-size: 0.95em;
+            }
+
+            .back-btn {
+                padding: 10px 25px;
+                font-size: 0.95em;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="page active">
+        <div class="main-container">
+            <h1 class="main-title">«НейроДиалог»</h1>
+            <p class="main-subtitle">Диалоговый словарь для учителя естественно-научных учебных предметов</p>
+
+            <div class="grid">
+                <div class="card card-gray card-a">
+                    <a class="circle" onclick="showPage">А</a>
+                    <div class="card-content">
+                       <div class="card-link-wrapper"><a class="card-link" href="pages/audio.html">Аудиоконтент</a><span class="plus" onclick="showPage('audio'); event.stopPropagation();">+</span></div>
+					   <div class="card-link-wrapper"><a class="card-link" href="pages/animation.html">Анимация</a><span class="plus" onclick="showPage('animation'); event.stopPropagation();">+</span></div>
+					 </div>
+                </div>
+				<div class="card card-red card-v">
+                    <a class="circle" onclick="showPage('visual')">В</a>
+                    <div class="card-content">
+                 		 <div class="card-link-wrapper"><a class="card-link" href="pages/visual.html">Визуализация</a><span class="plus" onclick="showPage('visual'); event.stopPropagation();">+</span></div>
+					   						                    </div>
+                </div>
+				
+				<div class="card card-yellow card-g">
+                    <a class="circle" onclick="showPage('graphs')">Г</a>
+                    <div class="card-content">
+                      <div class="card-link-wrapper"><a class="card-link" href="pages/diagrammy.html">Графики и диаграммы</a><span class="plus" onclick="showPage('graphs'); event.stopPropagation();">+</span></div>
+                    </div>
+                </div>
+				
+                <div class="card card-orange card-d-orange">
+                    <a class="circle" onclick="showPage('dialog')">Д</a>
+                    <div class="card-content">
+					 <div class="card-link-wrapper"><a class="card-link" href="pages/dialog.html">Диалог</a><span class="plus" onclick="showPage('dialog'); event.stopPropagation();">+</span></div>
+                        
+                    </div>
+                </div>
+
+                <div class="card card-purple card-d-purple">
+				                    <a class="circle" onclick="showPage('kim')">К</a>
+                    <div class="card-content">
+                        <div class="card-link-wrapper"><a class="card-link" href="pages/kim.html">Контрольно-измерительные материалы</a><span class="plus" onclick="showPage('kim'); event.stopPropagation();">+</span></div>
+					    </div>
+                </div>
+
+                <div class="card card-gray card-s">
+                    <a class="circle" onclick="showPage('articles')">С</a>
+                    <div class="card-content">
+                       <div class="card-link-wrapper"><a class="card-link" href="pages/article.html">Статьи</a><span class="plus" onclick="showPage('articles'); event.stopPropagation();">+</span></div>
+					     </div>
+                </div>
+
+                
+
+                <div class="card card-gray card-i">
+                    <a class="circle" onclick="showPage('infographic')">И</a>
+                    <div class="card-content">
+                      	<div class="card-link-wrapper"><a class="card-link" href="pages/infographics.html">Инфографика</a><span class="plus" onclick="showPage('infographic'); event.stopPropagation();">+</span></div>
+						<div class="card-link-wrapper"><a class="card-link" href="pages/identification.html">Идентификация объектов</a><span class="plus" onclick="showPage('identify'); event.stopPropagation();">+</span></div>
+						<div class="card-link-wrapper"><a class="card-link" href="pages/game.html">Игры</a><span class="plus" onclick="showPage('games'); event.stopPropagation();">+</span></div>
+                         </div>
+                </div>
+
+                <div class="card card-gray card-m">
+                    <a class="circle" onclick="showPage('modeling')">М</a>
+                    <div class="card-content">
+                        <div class="card-link-wrapper"><a class="card-link" href="pages/modeling.html">Моделирование</a><span class="plus" onclick="showPage('modeling'); event.stopPropagation();">+</span></div>
+					    </div>
+                </div>
+
+                <div class="card card-orange card-t">
+                    <a class="circle" onclick="showPage('texts')">Т</a>
+                    <div class="card-content">
+                         <div class="card-link-wrapper"><a class="card-link" href="pages/text.html">Тексты</a><span class="plus" onclick="showPage('texts'); event.stopPropagation();">+</span></div>
+					   </div>
+                </div>
+
+                
+
+                <div class="card card-gray card-p">
+                    <a class="circle" onclick="showPage('plan')">П</a>
+                    <div class="card-content">
+                        <div class="card-link-wrapper"><a class="card-link" href="pages/plane.html">План-конспект</a><span class="plus" onclick="showPage('plan'); event.stopPropagation();">+</span></div>
+						<div class="card-link-wrapper"><a class="card-link" href="pages/prezentation.html">Презентации</a><span class="plus" onclick="showPage('present'); event.stopPropagation();">+</span></div>
+						                      
+                    </div>
+                </div>
+
+                <div class="card card-purple card-e">
+                    <a class="circle" onclick="showPage('express')">Э</a>
+                    <div class="card-content">
+                        <div class="card-link-wrapper"><a class="card-link" href="pages/express_analizer.html">Экспресс-анализ</a><span class="plus" onclick="showPage('express'); event.stopPropagation();">+</span></div>
+				                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="graphs" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-graphs"></div>
+            <div class="section-content">
+                <h1>ГРАФИКИ И ДИАГРАММЫ</h1>
+                <p>— это автоматически сгенерированные визуализации данных, где искусственный интеллект помогает не только построить график или диаграмму, но и интерпретировать её смысл</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="audio" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-audio"></div>
+            <div class="section-content">
+                <h1>АУДИОКОНТЕНТ</h1>
+                <p>— это любой учебный или информационный материал, представленный в звуковой форме. Он может включать: озвученные тексты, аудиолекции и подкасты, звуковые пояснения к визуализациям, аудиозадания, озвученные сценарии</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="identify" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-identify"></div>
+            <div class="section-content">
+                <h1>ИДЕНТИФИКАЦИЯ ОБЪЕКТОВ</h1>
+                <p>— это процесс распознавания и определения конкретных предметов, явлений или сущностей по их признакам</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="animation" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-animation"></div>
+            <div class="section-content">
+                <h1>АНИМАЦИЯ</h1>
+                <p>— это искусство и технология создания иллюзии движения при помощи последовательности неподвижных изображений (кадров), которые сменяют друг друга с высокой частотой, создавая ощущение живого движения</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="visual" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-visual"></div>
+            <div class="section-content">
+                <h1>ВИЗУАЛИЗАЦИЯ</h1>
+                <p>— это процесс преобразования информации, данных или явлений в наглядные образы, которые помогают лучше понять и запомнить материал</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="dialog" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-dialog"></div>
+            <div class="section-content">
+                <h1>ДИАЛОГ</h1>
+                <p>— это форма взаимодействия, в которой человек и искусственный интеллект обмениваются репликами, идеями, вопросами и решениями</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="infographic" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-infographic"></div>
+            <div class="section-content">
+                <h1>ИНФОГРАФИКА</h1>
+                <p>— это способ визуального представления информации, данных или знаний в виде графики, схем, диаграмм и иллюстраций, который делает сложное понятным и наглядным</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="games" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-games"></div>
+            <div class="section-content">
+                <h1>ИГРЫ</h1>
+                <p>— формы деятельности, специально разработанные для обучения, развития навыков и закрепления знаний. Они объединяют игровую механику с педагогическими задачами</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="kim" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-kim"></div>
+            <div class="section-content">
+                <h1>КОНТРОЛЬНО-ИЗМЕРИТЕЛЬНЫЕ МАТЕРИАЛЫ</h1>
+                <p>— это специально разработанные задания, тесты и инструменты для проверки знаний, умений и навыков обучающихся в соответствии с образовательными стандартами</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modeling" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-modeling"></div>
+            <div class="section-content">
+                <h1>МОДЕЛИРОВАНИЕ</h1>
+                <p>— метод обучения, при котором учащиеся изучают явления, процессы или системы через их упрощённые модели. Оно помогает понять сложное, делая его наглядным и доступным</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="plan" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-plan"></div>
+            <div class="section-content">
+                <h1>ПЛАН-КОНСПЕКТ</h1>
+                <p>— это структурированный документ, который помогает учителю организовать занятие: определить цели, задачи, содержание, методы и последовательность действий</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="present" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-present"></div>
+            <div class="section-content">
+                <h1>ПРЕЗЕНТАЦИИ</h1>
+                <p>— это форма представления информации в структурированном и визуально оформленном виде, чаще всего с использованием слайдов</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="articles" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-articles"></div>
+            <div class="section-content">
+                <h1>СТАТЬИ</h1>
+                <p>— это тексты, которые генерируются алгоритмами на основе заданной темы, ключевых слов или структуры</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="texts" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-texts"></div>
+            <div class="section-content">
+                <h1>ТЕКСТЫ</h1>
+                <p>— это материалы, которые генерируются алгоритмами на основе заданной темы, ключевых слов или структуры</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="express" class="page">
+        <div class="section-container">
+            <div class="section-icon icon-express"></div>
+            <div class="section-content">
+                <h1>ЭКСПРЕСС-АНАЛИЗ</h1>
+                <p>— это быстрая оценка данных, ситуации или информации для принятия оперативных решений</p>
+                <button class="back-btn" onclick="showPage('home')">На главную</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

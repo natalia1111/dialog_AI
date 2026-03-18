@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аудиоконтент - НейроДиалог</title>
+<style>
+
+/* blink animation defined below */
+img { 
+max-width: 100%; 
+height: auto; 
+display: block; 
+}
+
+/* Кнопка звука */
+.sound-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 20px 40px;
+  font-size: 22px;
+  border-radius: 10px;
+  background: #00b894;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sound-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Карточки с картинками */
+.image-card {
+  text-align: center;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.image-card img {
+  display: block;
+  margin: 0 auto 10px;
+  max-width: 100%;
+  height: auto;
+}
+
+.image-card p {
+  font-weight: normal;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.info-list {
+  text-align: center;
+  padding-left: 0;
+  list-style-position: inside;
+}
+
+* {
+ margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', Arial, sans-serif;
+background: #f5f5f5;
+min-height: 100vh;
+padding: 20px;
+}
+
+.page {
+display: none;
+max-width: 1200px;
+margin: 0 auto;
+}
+
+.page.active {
+display: block;
+}
+
+.container {
+border: 3px dashed #7c4dff;
+border-radius: 20px;
+padding: 40px;
+background: white;
+min-height: 500px;
+}
+
+/* Сообщения чата */
+.msg-teacher {
+background: #e8e0f0;
+border-radius: 15px;
+padding: 15px 20px;
+margin-bottom: 15px;
+max-width: 90%;
+}
+
+.msg-teacher .label {
+color: #7c4dff;
+font-weight: bold;
+}
+
+.msg-teacher .label-bold {
+font-weight: bold;
+}
+
+.msg-ai {
+background: #fff3cd;
+border-radius: 15px;
+padding: 15px 20px;
+margin-bottom: 15px;
+max-width: 90%;
+}
+
+.msg-ai .label {
+color: #f5a623;
+ font-weight: bold;
+}
+
+/* Кнопки выбора с иконкой */
+.choice-buttons {
+display: flex;
+flex-direction: column;
+gap: 20px;
+margin-top: 30px;
+margin-left: 40px;
+position: relative;
+}
+
+.choice-btn {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+padding: 12px 25px;
+border-radius: 25px;
+text-decoration: none;
+color: white;
+font-size: 16px;
+transition: transform 0.2s, box-shadow 0.2s;
+width: 100%;
+max-width: 524px;
+}
+
+.choice-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+ .choice-btn.purple { background: #9b7fdb; }
+ .choice-btn.green { background: #5fc3a0; }
+.choice-btn.yellow { background: #f5c842; color: #333; }
+.choice-btn.gray { background: #888; }
+
+.choice-icon {
+width: 30px;
+height: 30px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+ /* Кнопка продолжения */
+.continue-btn {
+display: inline-block;
+ padding: 10px 25px;
+ background: #9b7fdb;
+color: white;
+ text-decoration: none;
+border-radius: 5px;
+margin-top: 20px;
+transition: background 0.2s;
+}
+
+.continue-btn:hover {
+ background: #7c4dff;
+ }
+
+  .continue-wrapper {
+     display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    gap: 10px;
+ }
+
+     /* Изображения */
+       .images-row {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        margin: 30px 0;
+        flex-wrap: wrap;
+     }
+
+        .image-card {
+           text-align: center;
+        }
+
+        .image-card img {
+             max-width: 350px;
+             width: 100%;
+             border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .image-card p {
+           margin-top: 10px;
+            font-weight: bold;
+           color: #333;
+       }
+
+        /* Облачко с текстом */
+       .speech-bubble {
+            background: white;
+            border: 2px solid #333;
+             border-radius: 15px;
+             padding: 15px 25px;
+            margin: 20px 0;
+           position: relative;
+          max-width: 600px;
+       }
+
+       .speech-bubble::before {
+           content: '';
+          position: absolute;
+     bottom: -15px;
+            left: 30px;
+ border-width: 15px 10px 0;
+ border-style: solid;
+  border-color: #333 transparent transparent;
+      }
+
+       .speech-bubble::after {
+         content: '';
+            position: absolute;
+           bottom: -12px;
+            left: 32px;
+            border-width: 12px 8px 0;
+           border-style: solid;
+           border-color: white transparent transparent;
+       }
+
+       /* Скриншот TTS */
+        .tts-screenshot {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+         padding: 20px;
+         margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+       .tts-header {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+         }
+
+        .tts-title {
+             color: #00b894;
+             font-size: 18px;
+           font-weight: bold;
+         }
+
+        .tts-links {
+            color: #00b894;
+            font-size: 14px;
+        }
+
+       .tts-subtitle {
+           color: #333;
+           font-weight: bold;
+            margin-bottom: 15px;
+      }
+
+        .tts-tabs {
+             display: flex;
+             gap: 15px;
+             margin-bottom: 10px;
+       }
+
+        .tts-tab {
+           color: #00b894;
+           cursor: pointer;
+       }
+
+        .tts-textarea {
+            width: 100%;
+           min-height: 150px;
+            border: 1px solid #ddd;
+           border-radius: 5px;
+            padding: 15px;
+           font-size: 14px;
+           line-height: 1.6;
+          resize: vertical;
+          margin-bottom: 10px;
+       }
+
+      .tts-stats {
+           text-align: right;
+           color: #999;
+           font-size: 12px;
+           margin-bottom: 15px;
+         }
+
+        .tts-controls {
+         display: grid;
+         grid-template-columns: repeat(2, 1fr);
+           gap: 15px;
+        margin-bottom: 20px;
+     }
+
+    .tts-control-row {
+        display: flex;
+             align-items: center;
+            gap: 10px;
+           background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 5px;
+            flex-wrap: wrap;
+      }
+
+        .tts-control-label {
+             min-width: 80px;
+             color: #666;
+        }
+
+        .tts-control-value {
+          padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+           background: white;
+           word-break: break-word;
+        }
+
+         .tts-buttons {
+            display: flex;
+             gap: 10px;
+             flex-wrap: wrap;
+      }
+
+       .audio-ctrl-row {
+           display: flex;
+           gap: 10px;
+           margin: 10px 0 6px;
+           flex-wrap: wrap;
+       }
+       .tts-btn.red {
+           background: #e55;
+           color: #fff;
+       }
+       .tts-btn.red:hover {
+           background: #c33;
+       }
+       .tts-btn {
+             padding: 10px 20px;
+           border: none;
+           border-radius: 5px;
+        cursor: pointer;
+          font-size: 14px;
+           display: flex;
+          align-items: center;
+        gap: 5px;
+      }
+
+       .tts-btn.green {
+           background: #00b894;
+         color: white;
+       }
+
+         .tts-btn.blue {
+             background: #0984e3;
+          color: white;
+        }
+
+       /* Заголовок слайда */
+      .slide-title {
+         text-align: center;
+font-size: 2.5em;
+ color: #333;
+        margin-bottom: 30px;
+    }
+
+     /* Список */
+      .info-list {
+            margin: 15px 0;
+           padding-left: 25px;
+       }
+
+       .info-list li {
+            margin-bottom: 8px;
+          line-height: 1.5;
+        }
+
+        /* Блок с текстом для копирования */
+        .copy-block {
+             display: flex;
+           gap: 20px;
+        align-items: flex-start;
+           margin: 20px 0;
+             padding: 20px;
+            background: #fff9e6;
+            border-radius: 15px;
+             border-left: 4px solid #f5a623;
+             flex-wrap: wrap;
+       }
+
+        .copy-icon {
+            width: 40px;
+           height: 40px;
+            border: 2px solid #ff6b6b;
+            border-radius: 5px;
+          display: flex;
+          align-items: center;
+           justify-content: center;
+          flex-shrink: 0;
+      }
+
+        .copy-text {
+            flex: 1;
+            min-width: 200px;
+       }
+
+        .copy-hint {
+         color: #ff6b6b;
+            font-size: 12px;
+             margin-bottom: 5px;
+         }
+
+         /* Карточка ссылки */
+         .link-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+             padding: 15px;
+            max-width: 300px;
+            width: 100%;
+       }
+
+       .link-card-title {
+            font-weight: bold;
+             margin-bottom: 5px;
+       }
+
+        .link-card-desc {
+            font-size: 12px;
+             color: #666;
+             margin-bottom: 5px;
+        }
+
+       .link-card-url {
+             font-size: 11px;
+           color: #00b894;
+       }
+
+       /* Аннотации на скриншоте */
+        .annotation {
+            display: flex;
+             align-items: center;
+             gap: 10px;
+            margin: 5px 0;
+       }
+
+       .annotation-arrow {
+          color: #7c4dff;
+           font-size: 20px;
+         }
+
+         .annotation-text {
+            color: #7c4dff;
+            font-size: 14px;
+      }
+
+         /* Кнопка послушать */
+         .listen-btn {
+            display: inline-flex;
+             align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: #333;
+             color: white;
+             border: none;
+             border-radius: 25px;
+            cursor: pointer;
+           font-size: 16px;
+        }
+
+.speaker-icon {
+           font-size: 24px;
+       }
+
+        /* Кнопка На главную */
+       .home-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #7c4dff;
+           color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 20px;
+        }
+
+         .home-btn:hover {
+            background: #6b3fe0;
+      }
+
+        /* Фиксированная кнопка На главную в левом нижнем углу */
+        .home-btn-fixed {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: none;
+            padding: 12px 30px;
+            background: #7c4dff;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .page.active .home-btn-fixed {
+            display: inline-block;
+        }
+
+        .home-btn-fixed:hover {
+            background: #6b3fe0;
+        }
+
+         /* Иконка клика */
+        .click-icon {
+            color: #ff6b6b;
+             font-size: 24px;
+        }
+
+        /* Трёхколоночный layout для кристаллов */
+        .crystals-row {
+           display: flex;
+           justify-content: space-around;
+           align-items: flex-start;
+           gap: 20px;
+           margin: 30px 0;
+           flex-wrap: wrap;
+       }
+
+       .crystal-card {
+           text-align: center;
+           flex: 1 1 200px;
+           min-width: 180px;
+           max-width: 280px;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+       }
+
+        .crystal-card img {
+             max-width: 200px;
+             width: 100%;
+             margin-bottom: 10px;
+             display: block;
+        }
+
+        .crystal-formula {
+            font-size: 1.5em;
+font-weight: bold;
+ margin-bottom: 10px;
+   }
+
+       .crystal-desc {
+             font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+       }
+
+      /* Кнопка попробовать */
+        .try-btn {
+           display: inline-block;
+           padding: 10px 25px;
+           background: #9b7fdb;
+            color: white;
+             text-decoration: none;
+            border-radius: 5px;
+        }
+
+         .try-btn:hover {
+            background: #7c4dff;
+        }
+
+         /* Нижний блок с ресурсами */
+       .resources-block {
+             display: flex;
+             gap: 30px;
+           align-items: flex-start;
+            margin-top: 30px;
+            flex-wrap: wrap;
+       }
+
+         /* Изображение вулкана */
+        .volcano-img {
+             max-width: 100%;
+            display: block;
+            margin: 0 auto;
+         }
+
+         /* Аннотации для вулкана */
+        .volcano-annotations {
+             display: flex;
+             justify-content: space-between;
+             gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .volcano-left, .volcano-right {
+            max-width: 300px;
+            flex: 1;
+            min-width: 200px;
+         }
+
+         .volcano-term {
+            font-weight: bold;
+             color: #333;
+       }
+
+        .volcano-definition {
+             font-size: 14px;
+           color: #555;
+           margin-top: 5px;
+         }
+
+         .volcano-bottom {
+             text-align: center;
+            margin-top: 20px;
+             max-width: 800px;
+           margin-left: auto;
+            margin-right: auto;
+       }
+
+       /* Вулкан с описаниями */
+       .volcano-layout {
+           display: flex;
+           gap: 30px;
+           align-items: flex-start;
+           flex-wrap: wrap;
+       }
+
+       .volcano-layout > div:nth-child(2) {
+           flex: 1;
+           text-align: center;
+           min-width: 280px;
+       }
+
+        /* ============ ПЛАНШЕТ (до 900px) ============ */
+        @media (max-width: 900px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 25px;
+                min-height: auto;
+            }
+
+            .choice-buttons {
+                margin-left: 0;
+            }
+
+            .choice-btn {
+                width: 100%;
+                max-width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .tts-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .slide-title {
+                font-size: 2em;
+            }
+
+            .volcano-layout {
+                flex-direction: column;
+            }
+
+            .volcano-layout > div:nth-child(2) {
+                order: -1;
+            }
+
+            .volcano-left, .volcano-right {
+                max-width: 100%;
+            }
+        }
+
+        /* ============ ТЕЛЕФОН (до 600px) ============ */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+
+            .msg-teacher, .msg-ai {
+                max-width: 100%;
+                padding: 12px 15px;
+            }
+
+            .choice-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .choice-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .continue-btn, .try-btn, .home-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .continue-wrapper {
+                justify-content: center;
+            }
+
+            .images-row {
+                gap: 20px;
+            }
+
+            .image-card img {
+                max-width: 100%;
+            }
+
+            .slide-title {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+
+            .speech-bubble {
+                padding: 12px 15px;
+                max-width: 100%;
+            }
+
+            .tts-screenshot {
+                padding: 15px;
+            }
+
+            .tts-title {
+                font-size: 14px;
+            }
+
+            .tts-subtitle {
+                font-size: 13px;
+            }
+
+            .tts-textarea {
+                min-height: 120px;
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .tts-control-row {
+                padding: 8px 10px;
+            }
+
+            .tts-control-label {
+                min-width: 60px;
+                font-size: 13px;
+            }
+
+            .tts-control-value {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+
+            .tts-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+
+            .crystals-row {
+                gap: 15px;
+            }
+
+            .crystal-card {
+                min-width: 150px;
+            }
+
+            .crystal-card img {
+                max-width: 150px;
+            }
+
+            .crystal-formula {
+                font-size: 1.2em;
+            }
+
+            .crystal-desc {
+                font-size: 13px;
+            }
+
+            .copy-block {
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .copy-text p {
+                font-size: 13px;
+            }
+
+            .link-card {
+                max-width: 100%;
+            }
+
+            .resources-block {
+                gap: 20px;
+            }
+
+            .listen-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .annotation-arrow, .annotation-text {
+                font-size: 12px;
+            }
+
+            .info-list {
+                padding-left: 15px;
+            }
+
+            .info-list li {
+                font-size: 13px;
+            }
+        }
+
+        /* ============ МАЛЕНЬКИЙ ТЕЛЕФОН (до 400px) ============ */
+        @media (max-width: 400px) {
+            .slide-title {
+                font-size: 1.3em;
+            }
+
+            .tts-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tts-btn {
+                justify-content: center;
+            }
+
+            .crystal-card {
+                min-width: 100%;
+            }
+
+            .choice-btn {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+        }
+
+.blink-hand {
+  font-size: 40px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+     </style>
+</head>
+ <body>
+ <!-- ==================== СТРАНИЦА 1: Выбор учителя ==================== -->
+<div id="page1" class="page active">
+     <div class="container">
+       <div class="msg-teacher">
+           <span class="label">Учитель:</span> У меня есть идея, но есть и проблема с <span class="label-bold">генерацией звука</span>
+       
+	   </div>
+        <div class="choice-buttons" style="margin-top: 60px;">
+            <a href="#" class="choice-btn purple" style="border-radius: 6px" onclick="showPage(8); return false;">
+              <span class="choice-icon">╰┈➤ˎˊ˗</span>
+                 Это было с учителем химии
+            </a>
+            <a href="#" class="choice-btn green" style="border-radius: 6px"onclick="showPage(2); return false;">
+              <span class="choice-icon">╰┈➤ˎˊ˗</span>
+               Это было с учителем биологии
+           </a>
+         <a href="#" class="choice-btn yellow" style="border-radius: 6px"onclick="showPage(14); return false;">
+               <span class="choice-icon">╰┈➤ˎˊ˗</span>
+              Это было с учителем географии
+           </a>
+		  </div>
+		  <a href="../index.html" class="try-btn start-btn" style="display:block; margin-top:30px; width:120px;">На старт</a>
+
+	       </div>
+	</div>
+
+<!-- ==================== СТРАНИЦА 2: Диалог биология ==================== -->
+ <div id="page2" class="page">
+    <div class="container">
+        <div class="msg-teacher">
+            <span class="label">Учитель:</span> Я делаю слайд-презентацию к уроку по теме "Комменсализм, протокооперация и мутуализм — типы положительных биотических взаимоотношений" и хочу ее озвучить. Как мне это сделать?
+        </div>
+
+         <div class="msg-ai">
+  <span class="label">ИИ:</span> Отличная идея! Озвучка сделает презентацию более живой и доступной. У тебя есть два варианта: сгенерировать аудиофайлы отдельно и вставить их в слайды или встроить текст в презентацию и использовать сервисы озвучки
+       </div>
+
+       <div class="msg-teacher">
+           <span class="label">Учитель:</span> Какой сервис для озвучки текста бесплатный и удобный?
+     </div>
+
+     <div class="msg-ai">
+           <span class="label">ИИ:</span> Ты можешь попробовать
+       </div>
+
+      <div class="continue-wrapper">
+           <a href="#" class="continue-btn" onclick="showPage(3); return false;">Продолжение</a>
+        </div>
+    </div>
+ </div>
+
+  <!-- ==================== СТРАНИЦА 3: Слайды биология ==================== -->
+    <div id="page3" class="page">
+        <div class="container">
+            <div class="images-row">
+                <div class="image-card">
+                  					<img src="img/kom1.png">
+                    <p>Нахлебничество</p>
+                </div>
+                <div class="image-card">
+             				<img src="img/kom2.png">
+                    <p>Квартирантство</p>
+                </div>
+            </div>
+
+            <div class="speech-bubble">
+                <strong>Хочу озвучить вот эти слайды</strong>
+            </div>
+
+            <div class="continue-wrapper">
+                <a href="#" class="continue-btn" onclick="showPage(4); return false;">Продолжение</a>
+            </div>
+        </div>
+    </div>
+
+<!-- ==================== СТРАНИЦА 4: TTS скриншот биология ==================== -->
+ <div id="page4" class="page">
+     <div class="container">
+       <div class="tts-screenshot">
+            <div class="tts-header">
+              <span class="tts-title">·॥· Бесплатный преобразование текста в речь</span>
+              <span class="tts-links">Donate Blog <span style="background:#00b894;color:white;padding:2px 8px;border-radius:3px;">Test New!</span></span>
+           </div>
+
+           <div class="tts-subtitle">Функция службы распознавания речи, которая преобразует текст в реалистичную речь.</div>
+
+          <div class="tts-tabs">
+             <span class="tts-tab" style="color:#00b894;">Текст</span>
+          <span class="tts-tab">SSML</span>
+             </div>
+
+                          <textarea class="tts-textarea" id="typewriter" rows="6" cols="80"></textarea>
+
+<script>
+  const text = "Комменсализм, возникающий в результате трофических связей и основанный на потреблении одним видом остатков пищи другого вида, называется нахлебничеством. Например, мелкие птицы питаются остатками пищи крокодилов, песцы доедают остатки трапезы медведя белого, а птицы-падальщики или гиены питаются остатками пищи крупных хищников (львов, леопардов)";
+  const textarea = document.getElementById("typewriter");
+  let index = 0;
+
+  function type() {
+    if (index < text.length) {
+      textarea.value += text.charAt(index);
+      index++;
+      setTimeout(type, 40); // скорость печати (мс)
+    }
+  }
+
+  window.addEventListener('load', type); // запуск при загрузке страницы
+</script>
+
+             <div class="tts-stats">Words: 346 | Lines: 1 | Blank Lines: 0</div>
+
+             <div class="tts-controls">
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Местный</span>
+                    <span class="tts-control-value">Russian (Russia) [ru-RU]</span><span class="blink-hand">⏪</span>
+
+              </div>
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Голос</span>
+                   <span class="tts-control-value">DmitryNeural(Male)</span><span class="blink-hand">⏪</span>
+                </div>
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Роль</span>
+                  <span class="tts-control-value">Default</span>
+              </div>
+               <div class="tts-control-row">
+               <span class="tts-control-label">Стиль</span>
+                 <span class="tts-control-value">General</span>
+              </div>
+                <div class="tts-control-row">
+                  <span class="tts-control-label">Скорость</span>
+                  <span class="tts-control-value">●───── x1</span>
+                 </div>
+               <div class="tts-control-row">
+                  <span class="tts-control-label">Подача</span>
+                   <span class="tts-control-value">────●─ 1</span>
+               </div>
+             </div>
+
+           <div class="tts-buttons">
+              <div class="tts-buttons">
+  <button class="tts-btn green" onclick="document.getElementById('komAudio').play()"><span class="blink-hand">&#128073;</span>Играть в ▶</button>
+</div>
+
+
+<audio id="komAudio">
+    <source src="src/kom.mp3" type="audio/mpeg">
+    Ваш браузер не поддерживает аудиоэлемент.
+</audio>
+
+<script>
+const audioKom = document.getElementById('komAudio');
+
+// Остановка при скрытии вкладки (переход на другую страницу, переключение)
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        audioKom.pause();
+        audioKom.currentTime = 0;
+    }
+});
+
+window.addEventListener("pagehide", () => {
+    audioKom.pause();
+    audioKom.currentTime = 0;
+});
+
+const linksKom = document.querySelectorAll('a');
+linksKom.forEach(link => {
+    link.addEventListener('click', () => {
+        audioKom.pause();
+        audioKom.currentTime = 0;
+    });
+});
+</script>
+               <button class="tts-btn blue">Play all ▶</button>
+                <button class="tts-btn green">Скачать ⬇</button>
+           </div>
+                       <div style="margin-top: 15px;">
+                <small>предварительная прослушка</small>
+                
+         </div>
+       </div>
+
+        <div class="continue-wrapper">
+            <a href="#" class="continue-btn" onclick="(function(){var a=document.getElementById('komAudio');a.pause();a.currentTime=0;showPage(5);})(); return false;">Продолжение</a>
+        </div>
+    </div>
+</div>
+
+ <!-- ==================== СТРАНИЦА 5: Комменсализм ==================== -->
+ <div id="page5" class="page">
+
+ <div class="container"> <h1 class="slide-title">КОММЕНСАЛИЗМ</h1>
+
+             <div class="images-row">
+         <div class="image-card">
+                <img src="img/kom1.png">
+                <p style="font-weight:normal; font-size: 14px; max-width: 300px;">Маленькая птица стоит в пасти крокодила и выклёвывает остатки пищи и паразитов из его зубов</p>
+             <ul class="info-list" style="text-align: left;">
+                  <li>Птица получает пищу — выгоду</li>
+                  <li>Крокодил получает чистку зубов — тоже выгоду</li>
+                <li>Оба участника получают пользу и не вредят друг другу.</li>
+               </ul>
+            </div>
+           <div class="image-card">
+              <img src="img/kom3.png">
+                <p style="font-weight:normal; font-size: 14px; max-width: 300px;">пример комменсализма, но с элементами конкуренции</p>
+               <ul class="info-list" style="text-align: left;">
+                  <li>Львы активно питаются добычей (буйволом).</li>
+                   <li>Гиены стоят рядом, ожидая, когда смогут получить остатки</li>
+                  <li>Они не охотились, но хотят воспользоваться результатом охоты львов</li>
+               </ul>
+             </div>
+      </div>
+
+<audio id="komAudio_p5">
+    <source src="src/kom.mp3" type="audio/mpeg">
+</audio>
+<div class="audio-ctrl-row">
+  <button class="tts-btn green audio-start-btn" onclick="(function(){var a=document.getElementById('komAudio_p5');a.currentTime=0;a.play();})()"><span class="blink-hand">&#9654;</span> Старт аудио</button>
+  <button class="tts-btn red audio-stop-btn" onclick="(function(){var a=document.getElementById('komAudio_p5');a.pause();a.currentTime=0;})()">&#9632; Стоп</button>
+</div>
+       <div class="continue-wrapper">
+             <a href="#" class="try-btn" onclick="(function(){var a=document.getElementById('komAudio_p5');a.pause();a.currentTime=0;showPage(7);})(); return false;">Попробовать</a>
+         </div>
+   </div>
+ </div>
+
+
+ <!-- ==================== СТРАНИЦА 7: Диалог с ресурсами биология ==================== -->
+ <div id="page7" class="page">
+     <div class="container">
+       <div class="msg-teacher">
+           <span class="label">Учитель:</span> Я делаю слайд-презентацию к уроку по теме "Комменсализм, протокооперация и мутуализм — типы положительных биотических взаимоотношений" и хочу ее озвучить. Как мне это сделать?
+      </div>
+
+         <div class="msg-ai">
+             <span class="label">ИИ:</span> Отличная идея! Озвучка сделает презентацию более живой и доступной. У тебя есть два варианта: сгенерировать аудиофайлы отдельно и вставить их в слайды или встроить текст в презентацию и использовать сервисы озвучки
+       </div>
+
+      <div class="msg-teacher">
+          <span class="label">Учитель:</span> Какой сервис для озвучки текста бесплатный и удобный?
+        </div>
+
+        <div class="msg-ai">
+             <span class="label">ИИ:</span> Ты можешь попробовать
+        </div>
+
+       <div class="resources-block">
+            <div class="copy-block" style="flex: 1;">
+                <div class="copy-icon">📋</div>
+                 <div class="copy-text">
+                   <div class="copy-hint">Скопируй этот текст и попробуй создать аудиофайл</div>
+                   <p>Комменсализм, возникающий в результате трофических связей и основанный на потреблении одним видом остатков пищи другого вида, называется нахлебничеством. Например, мелкие птицы питаются остатками пищи крокодилов, песцы доедают остатки трапезы медведя белого, а птицы-падальщики или гиены питаются остатками пищи крупных хищников (львов, леопардов)</p>
+                </div>
+             </div>
+
+            <div class="link-card">
+
+
+			   <a href="https://text-to-speech.online/" target="_blank" style="text-decoration:none; color:inherit;"> <div class="link-card"> <div class="link-card-title">Free Text to Speech Online Converter Tools</div> <div class="link-card-desc"> We developed an online text-to-speech synthesis tool, which converts text into natural and smooth human voice, provides 100+ speakers for you to choose, supports multi-language, multi-dialect and Chinese-English mixing, and can... </div> <div class="link-card-url">🔗 text-to-speech.online</div> </div> </a>
+           <span class="blink-hand">👆</span>
+
+		   </div>
+       </div>
+	    <a href="#" class="try-btn" onclick="showPage(1); return false;">На главную</a>
+    </div>
+   
+ </div>
+
+ <!-- ==================== СТРАНИЦА 8: Химия диалог ==================== -->
+<div id="page8" class="page">
+   <div class="container">
+       <div class="msg-teacher">
+            <span class="label">Учитель:</span> Я делаю слайд-презентацию к уроку по теме "Типы кристаллических решёток" и хочу ее озвучить. Как мне это сделать?
+        </div>
+
+       <div class="msg-ai">
+           <span class="label">ИИ:</span> Отличная идея! Озвучка сделает материал более доступным и выразительным. Сначала подготовь короткие тексты для каждого слайда — 1–2 предложения, которые поясняют визуальный материал
+        </div>
+
+       <div class="msg-teacher">
+           <span class="label">Учитель:</span> Хорошо. Например, для слайда «Ионная решётка» я написала: «Ионная кристаллическая решётка состоит из положительных и отрицательных ионов, удерживаемых электростатическими силами»<br>
+            Какой сервис для озвучки текста бесплатный и удобный?
+       </div>
+
+        <div class="msg-ai">
+          <span class="label">ИИ:</span> Предлагаю следующий
+      </div>
+
+         <div class="continue-wrapper">
+            <a href="#" class="continue-btn" onclick="showPage(9); return false;">Продолжение</a>
+       </div>
+  </div>
+ </div>
+
+ <!-- ==================== СТРАНИЦА 9: Слайд кристаллы ==================== -->
+<div id="page9" class="page">
+   <div class="container">
+   <h1 class="slide-title">ИОННАЯ РЕШЁТКА</h1>
+      <div class="crystals-row">
+           <div class="crystal-card">
+               <img src="img/kom4.png">
+               
+            </div>
+			            <div class="crystal-card">
+                <img src="img/kom5.png">
+                
+            </div>
+            <div class="crystal-card">
+                <img src="img/kom6.png">
+                 
+           </div>
+       </div>
+
+        <div class="speech-bubble">
+            <strong>Хочу озвучить этот слайд</strong>
+        </div>
+
+       <div class="continue-wrapper">
+           <a href="#" class="continue-btn" onclick="showPage(10); return false;">Продолжение</a>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== СТРАНИЦА 10: TTS химия ==================== -->
+ <div id="page10" class="page">
+     <div class="container">
+       <div class="tts-screenshot">
+            <div class="tts-header">
+              <span class="tts-title">·॥· Бесплатный преобразование текста в речь</span>
+              <span class="tts-links">Donate Blog <span style="background:#00b894;color:white;padding:2px 8px;border-radius:3px;">Test New!</span></span>
+           </div>
+
+           <div class="tts-subtitle">Функция службы распознавания речи, которая преобразует текст в реалистичную речь.</div>
+
+          <div class="tts-tabs">
+             <span class="tts-tab" style="color:#00b894;">Текст</span>
+          <span class="tts-tab">SSML</span>
+             </div>
+
+                          <textarea class="tts-textarea" id="typewriter10" rows="6" cols="80"></textarea>
+
+<script>
+(function() {
+  const text10 = "Ионная кристаллическая решётка состоит из положительных и отрицательных ионов, удерживаемых электростатическими силами";
+  const textarea10 = document.getElementById("typewriter10");
+  let index10 = 0;
+  let started10 = false;
+
+  function type10() {
+    if (index10 < text10.length) {
+      textarea10.value += text10.charAt(index10);
+      index10++;
+      setTimeout(type10, 40);
+    }
+  }
+
+  // Наблюдатель для запуска анимации когда страница становится видимой
+  const observer10 = new MutationObserver(function() {
+    const page10 = document.getElementById('page10');
+    if (page10 && page10.classList.contains('active') && !started10) {
+      started10 = true;
+      textarea10.value = '';
+      index10 = 0;
+      type10();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    observer10.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  });
+})();
+</script>
+             <div class="tts-stats">Words: 346 | Lines: 1 | Blank Lines: 0</div>
+
+             <div class="tts-controls">
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Местный</span>
+                    <span class="tts-control-value">Russian (Russia) [ru-RU]</span><span class="blink-hand">⏪</span>
+
+              </div>
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Голос</span>
+                   <span class="tts-control-value">SvetlanaNeural(Female)</span><span class="blink-hand">⏪</span>
+                </div>
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Роль</span>
+                  <span class="tts-control-value">Default</span>
+              </div>
+               <div class="tts-control-row">
+               <span class="tts-control-label">Стиль</span>
+                 <span class="tts-control-value">General</span>
+              </div>
+                <div class="tts-control-row">
+                  <span class="tts-control-label">Скорость</span>
+                  <span class="tts-control-value">●───── x1</span>
+                 </div>
+               <div class="tts-control-row">
+                  <span class="tts-control-label">Подача</span>
+                   <span class="tts-control-value">────●─ 1</span>
+               </div>
+             </div>
+
+           <div class="tts-buttons">
+              <div class="tts-buttons">
+  <button class="tts-btn green" onclick="document.getElementById('komAudio1').play()"><span class="blink-hand">&#128073;</span>Играть в ▶</button>
+</div>
+
+
+<audio id="komAudio1">
+    <source src="src/kom2.mp3" type="audio/mpeg">
+    Ваш браузер не поддерживает аудиоэлемент.
+</audio>
+
+<script>
+const audioKom1 = document.getElementById('komAudio1');
+
+// Остановка при скрытии вкладки
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        audioKom1.pause();
+        audioKom1.currentTime = 0;
+    }
+});
+
+// Дополнительно для мобильных браузеров и SPA
+window.addEventListener("pagehide", () => {
+    audioKom1.pause();
+    audioKom1.currentTime = 0;
+});
+
+// Остановка при переходе по ссылкам
+const linksKom1 = document.querySelectorAll('a');
+linksKom1.forEach(link => {
+    link.addEventListener('click', () => {
+        audioKom1.pause();
+        audioKom1.currentTime = 0;
+    });
+});
+</script>
+               <button class="tts-btn blue">Play all ▶</button>
+                <button class="tts-btn green">Скачать ⬇</button>
+           </div>
+                       <div style="margin-top: 15px;">
+                <small>предварительная прослушка</small>
+                 
+         </div>
+       </div>
+
+        <div class="continue-wrapper">
+            <a href="#" class="continue-btn" onclick="(function(){var a=document.getElementById('komAudio1');a.pause();a.currentTime=0;showPage(11);})(); return false;">Продолжение</a>
+        </div>
+    </div>
+</div>
+
+ <!-- ==================== СТРАНИЦА 11: Ионная решётка ==================== -->
+<div id="page11" class="page">
+  <div class="container">
+      <h1 class="slide-title">ИОННАЯ РЕШЁТКА</h1>
+
+       <div class="crystals-row">
+         <div class="crystal-card">
+              <img src="img/kom4.png">
+              
+              <p class="crystal-desc">Каждый ион окружён шестью противоположными — это типичная ионная решётка с координационным числом 6</p>
+          </div>
+          <div class="crystal-card">
+                <img src="img/kom5.png">
+           
+             <p class="crystal-desc">Координационное число — 8, то есть каждый ион окружён восемью противоположными</p>
+          </div>
+            <div class="crystal-card">
+               <img src="img/kom6.png">
+             
+              <p class="crystal-desc">Это ионная решётка с высокой симметрией и плотной упаковкой</p>
+           </div>
+       </div>
+
+<audio id="komAudio_p11">
+    <source src="src/kom2.mp3" type="audio/mpeg">
+</audio>
+<div class="audio-ctrl-row">
+  <button class="tts-btn green audio-start-btn" onclick="(function(){var a=document.getElementById('komAudio_p11');a.currentTime=0;a.play();})()"><span class="blink-hand">&#9654;</span> Старт аудио</button>
+  <button class="tts-btn red audio-stop-btn" onclick="(function(){var a=document.getElementById('komAudio_p11');a.pause();a.currentTime=0;})()">&#9632; Стоп</button>
+</div>
+
+     <div class="continue-wrapper">
+           <a href="#" class="try-btn" onclick="(function(){var a=document.getElementById('komAudio_p11');a.pause();a.currentTime=0;showPage(13);})(); return false;">Попробовать</a>
+     </div>
+ </div>
+ </div>
+
+ <!-- ==================== СТРАНИЦА 12: TTS с аннотациями химия ==================== -->
+ <div id="page12" class="page">
+  <div class="container">
+        <div class="tts-screenshot">
+            <div class="tts-header">
+                <span class="tts-title">·॥· Бесплатный преобразование текста в речь</span>
+                <span class="tts-links">Donate Blog <span style="background:#00b894;color:white;padding:2px 8px;border-radius:3px;">Test New!</span></span>
+           </div>
+
+           <div class="tts-subtitle">Функция службы распознавания речи, которая преобразует текст в реалистичную речь.</div>
+
+            <div class="tts-tabs">
+               <span class="tts-tab" style="color:#00b894;">Текст</span>
+                <span class="tts-tab">SSML</span>
+           </div>
+
+          <p style="color: #999; margin-bottom: 10px;">Пожалуйста, введите текст</p>
+
+             <textarea class="tts-textarea">Ионная кристаллическая решётка состоит из положительных и отрицательных ионов, удерживаемых электростатическими силами</textarea>
+
+       <div class="tts-stats">Words: -1 | Lines: 0 | Blank Lines: 1</div>
+
+           <div class="tts-controls">
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Местный</span>
+                   <span class="tts-control-value">Russian (Russia) [ru-RU]</span>
+                  <span class="annotation-arrow">◀──</span>
+                   <span class="annotation-text">выбрать язык</span>
+              </div>
+               <div class="tts-control-row">
+                   <span class="tts-control-label">Голос</span>
+                     <span class="tts-control-value">SvetlanaNeural(Female)</span>
+                    <span class="annotation-arrow">◀──</span>
+                  <span class="annotation-text">выбрать голос</span>
+               </div>
+                <div class="tts-control-row">
+                     <span class="tts-control-label">Роль</span>
+                     <span class="tts-control-value">Default</span>
+                 </div>
+               <div class="tts-control-row">
+                    <span class="tts-control-label">Стиль</span>
+                   <span class="tts-control-value">General</span>
+              </div>
+                 <div class="tts-control-row">
+                    <span class="tts-control-label">Скорость</span>
+                    <span class="tts-control-value">●───── x1</span>
+                </div>
+               <div class="tts-control-row">
+                    <span class="tts-control-label">Подача</span>
+                   <span class="tts-control-value">────●─ 1</span>
+                </div>
+           </div>
+
+           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+              <div class="tts-buttons">
+                   <span class="click-icon">👆</span>
+                   <button class="tts-btn green">Играть в ▶</button>
+                    <button class="tts-btn blue">Play all ▶</button>
+                  <span class="click-icon">👆</span>
+                   <button class="tts-btn green">Скачать ⬇</button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 15px;">
+                     <span style="font-size: 30px;">🔊</span>
+                    <button class="listen-btn">Послушать</button>
+               </div>
+            </div>
+
+            <div style="margin-top: 10px;">
+                 <small>предварительная прослушка</small>
+              
+            </div>
+        </div>
+    </div>
+ </div>
+
+ <!-- ==================== СТРАНИЦА 13: Ресурсы химия ==================== -->
+ <div id="page13" class="page">
+    <div class="container">
+       <div class="msg-teacher">
+            <span class="label">Учитель:</span> Я делаю слайд-презентацию к уроку по теме "Типы кристаллических решёток" и хочу ее озвучить. Как мне это сделать?
+      </div>
+
+       <div class="msg-ai">
+           <span class="label">ИИ:</span> Отличная идея! Озвучка сделает материал более доступным и выразительным. Сначала подготовь короткие тексты для каждого слайда — 1–2 предложения, которые поясняют визуальный материал
+       </div>
+
+      <div class="msg-teacher">
+            <span class="label">Учитель:</span> Хорошо. Например, для слайда «Ионная решётка» я написала: «Ионная кристаллическая решётка состоит из положительных и отрицательных ионов, удерживаемых электростатическими силами»<br>
+           Какой сервис для озвучки текста бесплатный и удобный?
+        </div>
+
+        <div class="msg-ai">
+           <span class="label">ИИ:</span> Предлагаю следующий
+       </div>
+
+        <div class="resources-block">
+           <div class="copy-block" style="flex: 1;">
+                 <div class="copy-icon">📋</div>
+                <div class="copy-text">
+                   <div class="copy-hint">Скопируй этот текст и попробуй создать аудиофайл</div>
+                    <p>Ионная кристаллическая решётка состоит из положительных и отрицательных ионов, удерживаемых электростатическими силами</p>
+               </div>
+            </div>
+
+            <div class="link-card">
+			<a href="https://text-to-speech.online/" target="_blank" style="text-decoration:none; color:inherit;"> <div class="link-card"> <div class="link-card-title">Free Text to Speech Online Converter Tools</div> <div class="link-card-desc"> We developed an online text-to-speech synthesis tool, which converts text into natural and smooth human voice, provides 100+ speakers for you to choose, supports multi-language, multi-dialect and Chinese-English mixing, and can... </div> <div class="link-card-url">🔗 text-to-speech.online</div> </div> </a>
+           <span class="blink-hand">👆</span>
+
+           </div>
+        </div>
+		 <a href="#" class="try-btn" onclick="showPage(1); return false;">На главную</a>
+   </div>
+  
+ </div>
+
+ <!-- ==================== СТРАНИЦА 14: География диалог ==================== -->
+ <div id="page14" class="page">
+    <div class="container">
+        <div class="msg-teacher">
+           <span class="label">Учитель:</span> Я создаю слайд-презентацию по теме «Строение вулкана» и хочу её озвучить. Как лучше это сделать?
+        </div>
+
+        <div class="msg-ai">
+             <span class="label">ИИ:</span> Отличный выбор! Озвучка добавит эмоциональную выразительность и поможет ученикам лучше усвоить материал. Начнём с подготовки текста для каждого слайда — короткого, чёткого и понятного
+         </div>
+
+      <div class="msg-teacher">
+            <span class="label">Учитель:</span> Какой сервис для озвучки текста бесплатный и удобный?
+        </div>
+
+       <div class="msg-ai">
+            <span class="label">ИИ:</span> Ты можешь попробовать
+       </div>
+
+        <div class="continue-wrapper">
+            <a href="#" class="continue-btn"onclick="showPage(15); return false;">Продолжение</a>
+         </div>
+    </div>
+ </div>
+
+ <!-- ==================== СТРАНИЦА 15: Слайд вулкан ==================== -->
+ <div id="page15" class="page">
+   <div class="container">
+      <img src="img/kom7.png">
+
+       <div class="speech-bubble" style="margin-top: 30px;">
+           <strong>Хочу озвучить вот этот слайд</strong>
+        </div>
+
+       <div class="continue-wrapper">
+             <a href="#" class="continue-btn" onclick="showPage(16); return false;">Продолжение</a>
+        </div>
+   </div>
+</div>
+
+ <!-- ==================== СТРАНИЦА 16: TTS география ==================== -->
+ <div id="page16" class="page">
+     <div class="container">
+       <div class="tts-screenshot">
+            <div class="tts-header">
+              <span class="tts-title">·॥· Бесплатный преобразование текста в речь</span>
+              <span class="tts-links">Donate Blog <span style="background:#00b894;color:white;padding:2px 8px;border-radius:3px;">Test New!</span></span>
+           </div>
+
+           <div class="tts-subtitle">Функция службы распознавания речи, которая преобразует текст в реалистичную речь.</div>
+
+          <div class="tts-tabs">
+             <span class="tts-tab" style="color:#00b894;">Текст</span>
+          <span class="tts-tab">SSML</span>
+             </div>
+
+                          <textarea class="tts-textarea" id="typewriter16" rows="6" cols="80"></textarea>
+
+<script>
+(function() {
+  const text16 = "Перед вами схема строения вулкана. Внутри земной коры находится магма — расплавленные горные породы. Она поднимается по жерлу и выходит наружу в виде лавы через кратер. Вулканический пепел и породы выбрасываются в атмосферу, формируя облако. Иногда магма прорывается через боковой кратер. Всё это — проявление внутренней активности Земли";
+  const textarea16 = document.getElementById("typewriter16");
+  let index16 = 0;
+  let started16 = false;
+
+  function type16() {
+    if (index16 < text16.length) {
+      textarea16.value += text16.charAt(index16);
+      index16++;
+      setTimeout(type16, 40);
+    }
+  }
+
+  // Наблюдатель для запуска анимации когда страница становится видимой
+  const observer16 = new MutationObserver(function() {
+    const page16 = document.getElementById('page16');
+    if (page16 && page16.classList.contains('active') && !started16) {
+      started16 = true;
+      textarea16.value = '';
+      index16 = 0;
+      type16();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    observer16.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  });
+})();
+</script>
+
+             <div class="tts-stats">Words: 346 | Lines: 1 | Blank Lines: 0</div>
+
+             <div class="tts-controls">
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Местный</span>
+                    <span class="tts-control-value">Russian (Russia) [ru-RU]</span><span class="blink-hand">⏪</span>
+
+              </div>
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Голос</span>
+                   <span class="tts-control-value">DmitryNeural(Male)</span><span class="blink-hand">⏪</span>
+                </div>
+              <div class="tts-control-row">
+                    <span class="tts-control-label">Роль</span>
+                  <span class="tts-control-value">Default</span>
+              </div>
+               <div class="tts-control-row">
+               <span class="tts-control-label">Стиль</span>
+                 <span class="tts-control-value">General</span>
+              </div>
+                <div class="tts-control-row">
+                  <span class="tts-control-label">Скорость</span>
+                  <span class="tts-control-value">●───── x1</span>
+                 </div>
+               <div class="tts-control-row">
+                  <span class="tts-control-label">Подача</span>
+                   <span class="tts-control-value">────●─ 1</span>
+               </div>
+             </div>
+
+           <div class="tts-buttons">
+              <div class="tts-buttons">
+ <button class="tts-btn green" onclick="document.getElementById('komAudio2').play()"><span class="blink-hand">&#128073;</span>Играть в ▶</button>
+</div>
+
+
+<audio id="komAudio2">
+    <source src="src/kom3.mp3" type="audio/mpeg">
+    Ваш браузер не поддерживает аудиоэлемент.
+</audio>
+
+<script>
+const audioKom2 = document.getElementById('komAudio2');
+
+// Остановка при скрытии вкладки
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        audioKom2.pause();
+        audioKom2.currentTime = 0;
+    }
+});
+
+window.addEventListener("pagehide", () => {
+    audioKom2.pause();
+    audioKom2.currentTime = 0;
+});
+
+const linksKom2 = document.querySelectorAll('a');
+linksKom2.forEach(link => {
+    link.addEventListener('click', () => {
+        audioKom2.pause();
+        audioKom2.currentTime = 0;
+    });
+});
+</script>
+
+               <button class="tts-btn blue">Play all ▶</button>
+                <button class="tts-btn green">Скачать ⬇</button>
+           </div>
+                       <div style="margin-top: 15px;">
+                <small>предварительная прослушка</small>
+                
+         </div>
+       </div>
+
+        <div class="continue-wrapper">
+            <a href="#" class="continue-btn" onclick="(function(){var a=document.getElementById('komAudio2');a.pause();a.currentTime=0;showPage(17);})(); return false;">Продолжение</a>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== СТРАНИЦА 17: Строение вулкана ==================== -->
+ <div id="page17" class="page">
+   <div class="container">
+        <h1 class="slide-title">СТРОЕНИЕ ВУЛКАНА</h1>
+
+        <div class="volcano-layout">
+       <div class="volcano-left">
+           <p><span class="volcano-term">Жерло</span> — трубообразный канал, по которому магма изливается на поверхность</p>
+              <br>
+              <p><span class="volcano-term">Вулканический очаг</span> — подземный резервуар магмы</p>
+        </div>
+
+          <div style="flex: 1; text-align: center; min-width: 280px;">
+                <img src="img/kom7.png" alt="Строение вулкана" style="max-width: 100%;">
+            </div>
+
+         <div class="volcano-right">
+                <p><span class="volcano-term">Кратер</span> (от греч. «кратер» — чаша) — чашеобразное углубление на плоской вершине вулкана</p>
+              <br>
+               <p><span class="volcano-term">Боковой кратер</span> — побочный кратер вулкана, расположенный на его склоне и представляющий собой окончание выводного канала, отходящего от центрального жерла</p>
+             </div>
+     </div>
+
+        <div class="volcano-bottom">
+         <p><span class="volcano-term">Вулкан</span> — возвышенность (чаще всего гора конусообразной формы), возникающая над каналами и трещинами в земной коре, по которым на земную поверхность извергаются лава, пепел, горячие газы, пары воды и обломки горных пород</p>
+       </div>
+
+<audio id="komAudio_p17">
+    <source src="src/kom3.mp3" type="audio/mpeg">
+</audio>
+<div class="audio-ctrl-row">
+  <button class="tts-btn green audio-start-btn" onclick="(function(){var a=document.getElementById('komAudio_p17');a.currentTime=0;a.play();})()"><span class="blink-hand">&#9654;</span> Старт аудио</button>
+  <button class="tts-btn red audio-stop-btn" onclick="(function(){var a=document.getElementById('komAudio_p17');a.pause();a.currentTime=0;})()">&#9632; Стоп</button>
+</div>
+      <div class="continue-wrapper">
+         <a href="#" class="try-btn" onclick="(function(){var a=document.getElementById('komAudio_p17');a.pause();a.currentTime=0;showPage(19);})(); return false;">Попробовать</a>
+      </div>
+    </div>
+ </div>
+
+
+
+ <!-- ==================== СТРАНИЦА 19: Ресурсы география ==================== -->
+<div id="page19" class="page">
+  <div class="container">
+      <div class="msg-teacher">
+         <span class="label">Учитель:</span> Я создаю слайд-презентацию по теме «Строение вулкана» и хочу её озвучить. Как лучше это сделать?
+       </div>
+
+      <div class="msg-ai">
+            <span class="label">ИИ:</span> Отличный выбор! Озвучка добавит эмоциональную выразительность и поможет ученикам лучше усвоить материал. Начнём с подготовки текста для каждого слайда — короткого, чёткого и понятного
+     </div>
+
+      <div class="msg-teacher">
+          <span class="label">Учитель:</span> Какой сервис для озвучки текста бесплатный и удобный?
+      </div>
+
+      <div class="msg-ai">
+          <span class="label">ИИ:</span> Ты можешь попробовать
+     </div>
+
+       <div class="resources-block">
+            <div class="copy-block" style="flex: 1;">
+               <div class="copy-icon">📋</div>
+               <div class="copy-text">
+                  <div class="copy-hint">Скопируй этот текст и попробуй создать аудиофайл</div>
+                    <p>Перед вами схема строения вулкана. Внутри земной коры находится магма — расплавленные горные породы. Она поднимается по жерлу и выходит наружу в виде лавы через кратер. Вулканический пепел и породы выбрасываются в атмосферу, формируя облако. Иногда магма прорывается через боковой кратер. Всё это — проявление внутренней активности Земли</p>
+              </div>
+           </div>
+
+ <div class="link-card">
+            <a href="https://text-to-speech.online/" target="_blank" style="text-decoration:none; color:inherit;"> <div class="link-card"> <div class="link-card-title">Free Text to Speech Online Converter Tools</div> <div class="link-card-desc"> We developed an online text-to-speech synthesis tool, which converts text into natural and smooth human voice, provides 100+ speakers for you to choose, supports multi-language, multi-dialect and Chinese-English mixing, and can... </div> <div class="link-card-url">🔗 text-to-speech.online</div> </div> </a>
+           <span class="blink-hand">👆</span>
+           </div>
+       
+     </div>
+ 	   <a href="#" class="try-btn" onclick="showPage(1); return false;">На главную</a>
+</div>
+</div>
+
+ <script>
+  function showPage(pageNum) {
+       // Скрыть все страницы
+      document.querySelectorAll('.page').forEach(page => {
+          page.classList.remove('active');
+        });
+       // Показать выбранную
+       document.getElementById('page' + pageNum).classList.add('active');
+      // Прокрутить вверх
+       window.scrollTo(0, 0);
+   }
+</script>
+
+</body>
+</html>
